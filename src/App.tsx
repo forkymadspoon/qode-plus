@@ -19,7 +19,7 @@ function App() {
       {/* Public / unauthenticated routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/onboarding" element={<OnboardingPage />} />
-      <Route path="/consumer/dasani-600ml" element={<ConsumerScanDasaniPage />} />
+      <Route path="/consumer/:gtin" element={<ConsumerScanDasaniPage />} />
 
       {/* Authenticated routes using AppShell layout */}
       <Route element={<AppShell />}>

@@ -1,182 +1,318 @@
-// src/pages/ConsumerScanDasaniPage.tsx
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from "react-router-dom";
+import {
+  Leaf,
+  Recycle,
+  Globe2,
+  Info,
+  ArrowRight,
+  Shield,
+  Sparkles,
+} from "lucide-react";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Card } from "../ui/card";
+import { ImageWithFallback } from "../figma/ImageWithFallback";
+import { products } from "../data/products";
+import type { Product } from "../data/products";
 
-// --- MOCK DATA ---
-const productInfo = {
-    name: 'Dasani Drinking Water (600ml)',
-    brand: 'Dasani',
-    gtin: '00049000082055',
-    origin: 'Malaysia',
-    updated: '2 hours ago',
-    impactScore: 'B',
-};
+// The GTIN we use for the Dasani demo passport
+const DASANI_GTIN = "0049000082055";
 
-const impactBadges = [
-    { label: 'Carbon', value: '~80 g CO₂e', subtext: 'per bottle', iconClass: 'bg-gray-700' },
-    { label: 'Packaging', value: 'PET Type 1, 30% rPET', subtext: 'Recycled content', iconClass: 'bg-green-600' },
-    { label: 'Sourcing', value: 'Bottled at certified facilities', subtext: 'Ethical sourcing', iconClass: 'bg-indigo-600' },
-];
+// Utility: turn product name into a URL-friendly slug
+function toSlug(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
 
-const recyclingSteps = [
-    'Rinse bottle lightly',
-    'Keep cap on (recycle together)',
-    'Leave label on (machine sorted)',
-    'Drop in Blue Bin or BCRS return point',
-];
+// Try to locate a product by GTIN or by slug (e.g. "dasani-600ml")
+function findProductByParam(gtinParam: string | undefined): Product | undefined {
+  if (!gtinParam) return undefined;
 
-const journeySteps = [
-    { name: 'Raw water source', country: 'Malaysia', icon: '💧' },
-    { name: 'Bottling facility', country: 'Malaysia', icon: '🏭' },
-    { name: 'Distribution centre', country: 'Singapore', icon: '🚚' },
-    { name: 'Retail shelf', country: 'Singapore', icon: '🛒' },
-    { name: 'You → Recycle', country: '', icon: '♻️' },
-];
+  // 1) Exact GTIN match
+  const byGtin = products.find((p) => p.gtin === gtinParam);
+  if (byGtin) return byGtin;
 
-// --- COMPONENTS ---
+  // 2) Slug match for backwards compatibility like /consumer/dasani-600ml
+  const bySlug = products.find((p) => toSlug(p.name).includes(gtinParam));
+  if (bySlug) return bySlug;
 
-const ImpactBadge: React.FC<{ label: string, value: string, subtext: string, iconClass: string }> = ({ label, value, subtext, iconClass }) => (
-    <div className="flex flex-col p-4 bg-white rounded-xl shadow-md border border-gray-100 flex-1 min-w-[45%] md:min-w-0">
-        <div className="flex items-center space-x-3 mb-2">
-            <div className={`w-8 h-8 rounded-full ${iconClass} flex items-center justify-center text-white text-lg font-bold`}>
-                {label.charAt(0)}
-            </div>
-            <p className="text-xs font-semibold uppercase text-gray-500">{label}</p>
-        </div>
-        <h3 className="text-lg font-bold text-gray-800 leading-tight">{value}</h3>
-        <p className="text-xs text-gray-400 mt-0.5">{subtext}</p>
-    </div>
-);
+  return undefined;
+}
 
-const JourneyTimeline: React.FC = () => (
-    <div className="overflow-x-auto py-2">
-        <div className="flex items-center space-x-6 min-w-max">
-            {journeySteps.map((step, index) => (
-                <React.Fragment key={index}>
-                    <div className="flex flex-col items-center text-center w-28 flex-shrink-0">
-                        <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-xl shadow-inner border-2 border-indigo-300">
-                            {step.icon}
-                        </div>
-                        <p className="mt-2 text-sm font-semibold text-gray-700 leading-tight">{step.name}</p>
-                        {step.country && <span className="text-xs text-gray-500 mt-0.5">{step.country}</span>}
-                    </div>
-                    {index < journeySteps.length - 1 && (
-                        <div className="h-0.5 w-12 bg-indigo-200 flex-shrink-0"></div>
-                    )}
-                </React.Fragment>
-            ))}
-        </div>
-    </div>
-);
+export default function ConsumerScanDasaniPage() {
+  const { gtin } = useParams<{ gtin: string }>();
+  const product = findProductByParam(gtin);
 
-
-const ConsumerScanDasaniPage = () => {
+  // If we can't find a product, show a simple friendly message
+  if (!product) {
     return (
-        <div className="bg-gray-100 min-h-screen flex justify-center py-8">
-            {/* Mobile View Container */}
-            <div className="w-full max-w-md md:max-w-[400px] bg-white shadow-2xl rounded-2xl md:rounded-3xl overflow-hidden flex flex-col min-h-[calc(100vh-64px)]">
-                
-                {/* Scrollable Content Area */}
-                <div className="flex-1 p-5 md:p-6 space-y-6 md:space-y-8 overflow-y-auto">
-
-                    {/* Top Header Section */}
-                    <div className="flex justify-between items-center pb-2 border-b border-gray-100">
-                        <div className="text-lg font-bold text-indigo-600">Qode+</div>
-                        <div className="text-xs text-gray-400">
-                            GS1 Verified Product
-                            <span className="block mt-0.5">Data updated {productInfo.updated}</span>
-                        </div>
-                    </div>
-
-                    {/* Product Summary */}
-                    <div className="space-y-4 text-center">
-                        {/* Thumbnail Placeholder */}
-                        <div className="w-32 h-32 mx-auto bg-gray-100 rounded-xl flex items-center justify-center border border-dashed border-gray-300 shadow-inner">
-                            <span className="text-4xl">🧴</span>
-                        </div>
-                        <h1 className="text-2xl font-extrabold text-gray-900">{productInfo.name}</h1>
-                        <p className="text-sm text-gray-500">
-                            Brand: {productInfo.brand} &bull; GTIN: {productInfo.gtin}
-                            <span className="block font-semibold text-indigo-600 mt-1">Origin: {productInfo.origin}</span>
-                        </p>
-                        <p className="text-base text-gray-700 font-medium pt-2">
-                            Thanks for checking this product’s impact.
-                        </p>
-                    </div>
-
-                    {/* Impact Highlight Card */}
-                    <div className="p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-xl shadow-sm flex justify-between items-center">
-                        <p className="text-sm font-medium text-indigo-800">
-                            This bottle has ~30% lower carbon impact than the category average.
-                        </p>
-                        <span className="px-3 py-1 inline-flex text-xs font-bold rounded-lg uppercase bg-indigo-100 text-indigo-800 border border-indigo-300 ml-3 flex-shrink-0">
-                            Score: {productInfo.impactScore}
-                        </span>
-                    </div>
-
-                    {/* Small Badges Row */}
-                    <div className="flex flex-wrap justify-between gap-3">
-                        {impactBadges.map((badge) => (
-                            <ImpactBadge key={badge.label} {...badge} />
-                        ))}
-                    </div>
-
-                    {/* How to Recycle Card */}
-                    <div className="bg-white p-5 rounded-xl shadow-md border border-gray-100">
-                        <h2 className="text-xl font-bold text-gray-800 mb-4">How to recycle in Singapore (SG)</h2>
-                        <ul className="space-y-2 list-none pl-0 text-gray-700 text-sm">
-                            {recyclingSteps.map((step, index) => (
-                                <li key={index} className="flex items-start">
-                                    <span className="text-green-500 mr-2 text-lg leading-none">✓</span>
-                                    {step}
-                                </li>
-                            ))}
-                        </ul>
-                        <button className="mt-4 pt-3 border-t border-gray-100 w-full text-indigo-600 font-medium text-sm hover:text-indigo-800 transition-colors text-left">
-                            Learn more about recycling this item →
-                        </button>
-                    </div>
-
-                    {/* Material Journey Timeline */}
-                    <div className="space-y-4">
-                        <h2 className="text-xl font-bold text-gray-800">Where this bottle has been</h2>
-                        <JourneyTimeline />
-                    </div>
-                    
-                    {/* AI Insight Card */}
-                    <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl shadow-sm">
-                        <h4 className="font-semibold text-gray-700 mb-2">AI Insight</h4>
-                        <div className="flex justify-between items-start">
-                            <p className="text-sm text-gray-600 flex-1">
-                                Most of this product’s footprint comes from PET bottle production, not the water inside.
-                            </p>
-                            <span className="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-800 ml-4 flex-shrink-0">
-                                High confidence
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Actions Row */}
-                    <div className="flex flex-col space-y-3 pt-3">
-                        {/* Link to the internal Product Passport (conceptually for verified users) */}
-                        <Link to="/product-passport/dasani-600ml" className="text-center w-full px-4 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                            View full impact details
-                        </Link>
-                        <a href="#" className="text-center text-sm text-gray-500 hover:text-indigo-600 transition-colors">
-                            Compare with similar products
-                        </a>
-                    </div>
-                </div>
-
-                {/* Bottom Micro Hint / Scroll Bar */}
-                <div className="flex-shrink-0 p-3 flex flex-col items-center border-t border-gray-100 bg-gray-50">
-                    <div className="w-12 h-1 bg-gray-300 rounded-full mb-1"></div>
-                    <p className="text-xs text-gray-400">Scroll for more details</p>
-                </div>
-
+      <div className="min-h-screen w-full bg-[#F4F4F4] flex flex-col">
+        <header className="w-full border-b border-[#E5E7EB] bg-white">
+          <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <p className="font-['Familjen_Grotesk',sans-serif] font-bold text-lg leading-normal">
+                <span className="text-[#EFBC02]">Q</span>
+                <span className="text-[#01416C]">ode</span>
+                <span className="text-[#E92E16]">+</span>
+              </p>
+              <span className="text-xs text-[#9CA3AF] hidden sm:inline">
+                Impact Ledger
+              </span>
             </div>
-        </div>
-    );
-};
+            <div className="flex items-center gap-1 text-[10px] sm:text-xs text-[#6B7280]">
+              <Sparkles className="w-4 h-4 text-[#F0B82E]" />
+              <span>Powered by product impact data</span>
+            </div>
+          </div>
+        </header>
 
-export default ConsumerScanDasaniPage;
+        <main className="flex-1">
+          <div className="max-w-3xl mx-auto px-4 py-10 space-y-4">
+            <h1 className="text-2xl font-semibold text-[#111827] mb-2">
+              We couldn&apos;t find this product
+            </h1>
+            <p className="text-sm text-[#6B7280]">
+              The code you scanned ( <span className="font-mono">{gtin}</span>{" "}
+              ) doesn&apos;t match any product in this demo. This can happen if:
+            </p>
+            <ul className="list-disc pl-5 text-sm text-[#6B7280] space-y-1">
+              <li>The product hasn&apos;t been onboarded into Qode+ yet.</li>
+              <li>The QR code points to an outdated or test URL.</li>
+            </ul>
+            <p className="text-xs text-[#9CA3AF]">
+              This page is a demo of how 2D codes can connect shoppers to trusted
+              impact information once products are registered.
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Build some consumer-friendly values from product data
+  const brand = product.brand ?? "Brand owner";
+  const carbonPerUnit = product.carbonFootprint || "—";
+  const impactGrade = product.impactScore ?? "—";
+  const packaging = product.packagingType || "Packaged product";
+  const productImage =
+    product.image ||
+    "https://images.unsplash.com/photo-1580917154088-2c4f4c972b57?auto=format&fit=crop&w=600&q=80";
+
+  const isDasani = product.gtin === DASANI_GTIN;
+
+  // CTA destination:
+  // - Dasani → Product Passport demo
+  // - Others → Product detail page in the app
+  const ctaHref = isDasani
+    ? "/product-passport/dasani-600ml"
+    : `/products/${product.gtin}`;
+  const ctaLabel = isDasani
+    ? "View Product Passport"
+    : "View product details";
+
+  return (
+    <div className="min-h-screen w-full bg-[#F4F4F4] flex flex-col">
+      {/* Top bar / brand strip */}
+      <header className="w-full border-b border-[#E5E7EB] bg-white">
+        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            {/* Qode+ logo text */}
+            <p className="font-['Familjen_Grotesk',sans-serif] font-bold text-lg leading-normal">
+              <span className="text-[#EFBC02]">Q</span>
+              <span className="text-[#01416C]">ode</span>
+              <span className="text-[#E92E16]">+</span>
+            </p>
+            <span className="text-xs text-[#9CA3AF] hidden sm:inline">
+              Impact Ledger
+            </span>
+          </div>
+          <div className="flex items-center gap-1 text-[10px] sm:text-xs text-[#6B7280]">
+            <Sparkles className="w-4 h-4 text-[#F0B82E]" />
+            <span>Powered by product impact data</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="flex-1">
+        <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
+          {/* Intro */}
+          <section className="space-y-3">
+            <p className="text-xs text-[#6B7280] uppercase tracking-wide flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+              You scanned a 2D code on this product
+            </p>
+            <h1 className="text-2xl sm:text-3xl font-semibold text-[#111827]">
+              See the story behind your {product.category?.toLowerCase() || "product"}
+            </h1>
+            <p className="text-sm sm:text-base text-[#6B7280]">
+              This page gives you a quick view of the environmental impact and
+              recycling info for:
+            </p>
+          </section>
+
+          {/* Product summary card */}
+          <Card className="p-4 sm:p-5 bg-white border border-[#E5E7EB] rounded-2xl">
+            <div className="flex gap-4 sm:gap-5">
+              {/* Image */}
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] overflow-hidden flex items-center justify-center">
+                  <ImageWithFallback
+                    src={productImage}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Text + badges */}
+              <div className="flex-1 min-w-0 flex flex-col gap-2">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-[#6B7280] mb-0.5">
+                    {brand}
+                  </p>
+                  <h2 className="text-base sm:text-lg font-semibold text-[#111827]">
+                    {product.name}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#9CA3AF] mt-0.5">
+                    GTIN: {product.gtin}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <Badge className="bg-[#EBF5F0] text-[#065F46] rounded-full px-3 py-1 text-[11px] sm:text-xs flex items-center gap-1.5">
+                    <Leaf className="w-3 h-3" />
+                    Impact score: {impactGrade}
+                  </Badge>
+                  <Badge className="bg-[#EFF6FF] text-[#1D4ED8] rounded-full px-3 py-1 text-[11px] sm:text-xs flex items-center gap-1.5">
+                    <Recycle className="w-3 h-3" />
+                    {packaging}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Impact grade */}
+              <div className="hidden sm:flex flex-col items-center justify-center gap-2">
+                <div className="w-12 h-12 rounded-full border-2 border-[#10B981] bg-[#ECFDF3] flex items-center justify-center">
+                  <span className="text-lg font-semibold text-[#047857]">
+                    {impactGrade}
+                  </span>
+                </div>
+                <span className="text-[11px] text-[#6B7280] text-center leading-tight">
+                  Impact grade
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          {/* Key info cards */}
+          <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Impact per unit */}
+            <Card className="p-4 bg-white border border-[#E5E7EB] rounded-2xl">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Leaf className="w-4 h-4 text-[#059669]" />
+                  <h3 className="text-sm font-medium text-[#111827]">
+                    Environmental impact (demo)
+                  </h3>
+                </div>
+                <Badge className="bg-[#ECFDF3] text-[#047857] rounded-full px-2 py-0.5 text-[10px]">
+                  per unit
+                </Badge>
+              </div>
+              <p className="text-2xl font-semibold text-[#111827]">
+                {carbonPerUnit}
+              </p>
+              <p className="text-xs text-[#6B7280] mt-1.5">
+                Estimated carbon footprint based on lifecycle data for this
+                product type.
+              </p>
+            </Card>
+
+            {/* Recycling guidance */}
+            <Card className="p-4 bg-white border border-[#E5E7EB] rounded-2xl">
+              <div className="flex items-center gap-2 mb-3">
+                <Recycle className="w-4 h-4 text-[#2563EB]" />
+                <h3 className="text-sm font-medium text-[#111827]">
+                  How to recycle this product
+                </h3>
+              </div>
+              <ul className="space-y-1.5 text-xs text-[#4B5563]">
+                <li>• Empty the contents completely.</li>
+                <li>
+                  • Follow your local recycling rules for{" "}
+                  <span className="font-medium">{packaging}</span>.
+                </li>
+                <li>• Look for the nearest recycling bin where available.</li>
+              </ul>
+              <p className="text-[11px] text-[#9CA3AF] mt-2">
+                Always follow local recycling instructions in your country or city.
+              </p>
+            </Card>
+          </section>
+
+          {/* Deeper info / trust section */}
+          <section className="space-y-4">
+            <Card className="p-4 sm:p-5 bg-white border border-[#E5E7EB] rounded-2xl">
+              <div className="flex items-start gap-3 mb-3">
+                <Globe2 className="w-5 h-5 text-[#05466C] mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-[#111827] mb-1">
+                    Where does this data come from?
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#6B7280]">
+                    This view is powered by Qode+ Impact Ledger and brings together
+                    product information, packaging details, and sustainability data
+                    shared by the brand owner and their suppliers.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
+                <div className="flex items-center gap-2 text-xs text-[#6B7280]">
+                  <Shield className="w-4 h-4 text-[#10B981]" />
+                  <span>Verified GTIN &amp; product identity</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-[#6B7280]">
+                  <Info className="w-4 h-4 text-[#F0B82E]" />
+                  <span>Lifecycle &amp; packaging data (demo)</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-[#6B7280]">
+                  <Sparkles className="w-4 h-4 text-[#F59E0B]" />
+                  <span>Designed for next-gen 2D barcodes</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* CTA to full passport / details */}
+            <Card className="p-4 sm:p-5 bg-[#05466C] rounded-2xl text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="space-y-1">
+                <h3 className="text-sm sm:text-base font-semibold">
+                  Want to see more about this product?
+                </h3>
+                <p className="text-xs sm:text-sm text-[#E5E7EB] max-w-md">
+                  Explore the deeper lifecycle view, suppliers, and regulatory data
+                  in the brand / expert view.
+                </p>
+              </div>
+              <Link to={ctaHref} className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-white text-[#05466C] hover:bg-[#F9FAFB] rounded-full px-4 sm:px-5 text-sm font-medium flex items-center justify-center gap-1.5">
+                  {ctaLabel}
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </Card>
+          </section>
+
+          {/* Tiny legal-ish note */}
+          <p className="text-[10px] text-center text-[#9CA3AF] pt-2 pb-4">
+            This page is a demo experience showing how next-generation 2D codes can
+            connect shoppers to trusted product impact information.
+          </p>
+        </div>
+      </main>
+    </div>
+  );
+}
