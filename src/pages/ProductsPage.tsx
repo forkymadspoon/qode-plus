@@ -13,7 +13,6 @@ import {
 
 // Image imports (make sure these paths & filenames exist)
 import tomatoImg from "../assets/products/organic-tomato-pasta-sauce.png";
-import waterImg from "../assets/products/sparkling-mineral-water-500ml.png";
 import moisturizerImg from "../assets/products/natural-face-moisturizer-50ml.png";
 import colaImg from "../assets/products/premium-cola-330ml.png";
 import cerealImg from "../assets/products/whole-grain-breakfast-cereal.png";
@@ -21,7 +20,7 @@ import shampooImg from "../assets/products/organic-shampoo-250ml.png";
 import orangeJuiceImg from "../assets/products/fresh-orange-juice-1l.png";
 import serumImg from "../assets/products/anti-aging-serum-30ml.png";
 import oliveOilImg from "../assets/products/artisan-olive-oil-500ml.png";
-
+import dasaniImg from "../assets/products/dasani-drinking-water-600ml.png";
 
 type ProductCategory =
   | "FMCG – Food Products"
@@ -60,9 +59,9 @@ const mockProducts: Product[] = [
   },
   {
     id: 2,
-    name: "Sparkling Mineral Water 500ml",
-    image: waterImg,
-    gtin: "5012345678901",
+    name: "Dasani Drinking Water 600ml",
+    image: dasaniImg,
+    gtin: "0049000082055",
     category: "BCRS – Beverage Containers",
     impactScore: "A",
     carbonFootprint: "4.1 kg CO₂e",
@@ -70,7 +69,7 @@ const mockProducts: Product[] = [
     circularity: "85%",
     compliance: "Compliant",
     updated: "2024-11-25",
-  },
+  },  
   {
     id: 3,
     name: "Natural Face Moisturizer 50ml",
