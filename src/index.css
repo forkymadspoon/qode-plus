@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* your global reset/styles can come after this */
+html,
+body,
+#root {
+  height: 100%;
+}
