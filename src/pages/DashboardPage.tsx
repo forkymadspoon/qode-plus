@@ -1,321 +1,223 @@
-import React from 'react';
-import {
-  Package,
-  Gauge,
-  AlertTriangle,
-  UserX,
-  BarChart3,
-} from 'lucide-react';
-import { Card } from '../ui/card';
-import { Badge } from '../ui/badge';
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from 'recharts';
+// src/pages/DashboardPage.tsx
 
-// ---------- Mock data ----------
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const carbonData = [
-  { month: 'Jan', carbon: 12.4 },
-  { month: 'Feb', carbon: 13.1 },
-  { month: 'Mar', carbon: 14.2 },
-  { month: 'Apr', carbon: 13.8 },
-  { month: 'May', carbon: 12.9 },
-  { month: 'Jun', carbon: 12.2 },
-  { month: 'Jul', carbon: 11.7 },
-  { month: 'Aug', carbon: 11.3 },
-  { month: 'Sep', carbon: 11.8 },
-  { month: 'Oct', carbon: 12.0 },
-  { month: 'Nov', carbon: 12.6 },
-  { month: 'Dec', carbon: 13.0 },
-];
-
-const mockAlerts = [
-  {
-    id: 1,
-    severity: 'High',
-    message: 'High-impact PET bottle detected in BCRS category',
-    severityColor: 'bg-[#FEE2E2] text-[#EB121E] border-[#EB121E]',
-  },
-  {
-    id: 2,
-    severity: 'Medium',
-    message: 'Missing supplier certifications for 2 key products',
-    severityColor: 'bg-[#FEF3C7] text-[#92400E] border-[#F0B82E]',
-  },
-  {
-    id: 3,
-    severity: 'Low',
-    message: 'Circularity score below target for 4 SKUs',
-    severityColor: 'bg-[#E5E7EB] text-[#6B7280] border-[#9CA3AF]',
-  },
-  {
-    id: 4,
-    severity: 'High',
-    message: 'Unverified energy consumption data for Q4',
-    severityColor: 'bg-[#FEE2E2] text-[#EB121E] border-[#EB121E]',
-  },
-  {
-    id: 5,
-    severity: 'Medium',
-    message: 'New regulatory change requires data update',
-    severityColor: 'bg-[#FEF3C7] text-[#92400E] border-[#F0B82E]',
-  },
-];
-
-// ---------- Reusable pieces ----------
-
-interface MetricCardProps {
-  icon: React.ReactNode;
-  value: string;
+// --- MOCK DATA (Reusing existing structures for context) ---
+interface Kpi {
   label: string;
-  caption: string;
-  iconBg: string;
+  value: string;
+  color: string;
+  subText: string;
 }
 
-function MetricCard({ icon, value, label, caption, iconBg }: MetricCardProps) {
+const kpis: Kpi[] = [
+  { label: 'Total Products Tracked', value: '128', color: 'text-indigo-600', subText: 'GS1 Standards utilized' },
+  { label: 'Average Impact Score', value: 'B+', color: 'text-green-600', subText: 'Target: A-' },
+  { label: 'High-Risk Products', value: '6', color: 'text-red-600', subText: 'Requires immediate review' },
+  { label: 'Suppliers with Missing Data', value: '3', color: 'text-amber-600', subText: 'Contact for certification' },
+];
+
+interface Alert {
+  id: number;
+  type: 'High' | 'Medium' | 'Low';
+  description: string;
+  color: string;
+}
+
+const alerts: Alert[] = [
+  { id: 1, type: 'High', description: 'High-impact PET bottle detected in BCRS category', color: 'bg-red-500' },
+  { id: 2, type: 'Medium', description: 'Missing supplier certifications for 2 key products', color: 'bg-amber-500' },
+  { id: 3, type: 'Low', description: 'Circularity score below target for 4 SKUs', color: 'bg-yellow-500' },
+  { id: 4, type: 'High', description: 'Unverified energy consumption data for Q4', color: 'bg-red-500' },
+  { id: 5, type: 'Medium', description: 'New regulatory change requires data update', color: 'bg-amber-500' },
+];
+
+interface LedgerEvent {
+  id: number;
+  timestamp: string;
+  event: string;
+  product: string;
+  status: 'Success' | 'Error';
+}
+
+const ledgerEvents: LedgerEvent[] = [
+  { id: 1, timestamp: '2025-11-30 14:02', event: 'Batch LOT21H23 verified', product: 'Dasani 600ml', status: 'Success' },
+  { id: 2, timestamp: '2025-11-29 09:47', event: 'Packaging spec updated (30% rPET)', product: 'Dasani 600ml', status: 'Success' },
+  { id: 3, timestamp: '2025-11-28 17:10', event: 'Supplier audit complete: V-Source', product: 'Aluminum Can 330ml', status: 'Success' },
+  { id: 4, timestamp: '2025-11-28 11:30', event: 'Carbon footprint calculation error', product: 'Plastic Cap', status: 'Error' },
+  { id: 5, timestamp: '2025-11-27 08:05', event: 'New product passport created', product: 'Smart Water 500ml', status: 'Success' },
+];
+
+// --- UTILITY COMPONENTS ---
+
+const KpiCard: React.FC<Kpi> = ({ label, value, color, subText }) => (
+  <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+    <p className="text-sm font-medium text-gray-500 mb-1">{label}</p>
+    <div className="flex items-end justify-between">
+      <h3 className={`text-4xl font-extrabold ${color}`}>{value}</h3>
+      <p className="text-xs text-gray-400 font-medium ml-4">{subText}</p>
+    </div>
+  </div>
+);
+
+const AlertItem: React.FC<Alert> = ({ type, description, color }) => (
+  <li className="flex items-start space-x-3 py-3 border-b border-gray-100 last:border-b-0">
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold text-white ${color} mt-0.5 shadow-md`}>
+      {type}
+    </span>
+    <p className="text-sm text-gray-700 leading-snug flex-1">
+      {description}
+    </p>
+  </li>
+);
+
+const LedgerRow: React.FC<LedgerEvent> = ({ timestamp, event, product, status }) => {
+  const [datePart, timePart] = timestamp.split(' ');
   return (
-    <Card className="p-5 sm:p-6 bg-white border border-[#E5E7EB] rounded-xl hover:shadow-lg transition-all">
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg ${iconBg} flex items-center justify-center`}>
-          {icon}
-        </div>
-      </div>
-      <div className="flex flex-col gap-1">
-        <div className="text-xl sm:text-2xl font-semibold text-[#111827]">{value}</div>
-        <p className="text-sm text-[#6B7280]">{label}</p>
-        <p className="text-xs text-[#9CA3AF] mt-1">{caption}</p>
-      </div>
-    </Card>
+    <tr className="border-b border-gray-100 hover:bg-indigo-50/50 transition-colors">
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{datePart} {timePart}</td>
+      <td className="px-6 py-4 text-sm font-medium text-gray-800">{event}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 font-semibold">{product}</td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+          status === 'Success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          {status}
+        </span>
+      </td>
+    </tr>
   );
-}
+};
 
-function CustomTooltip({ active, payload }: any) {
-  if (active && payload && payload.length) {
+
+// --- NEW SCAN SIMULATOR CARD COMPONENT ---
+
+const ScanSimulatorCard = () => {
+    const navigate = useNavigate();
+    const [scanUrl, setScanUrl] = useState('https://qodeplus.com/gl/00049000082055');
+
+    const handleSimulateScan = () => {
+        // Navigate directly to the Dasani consumer page
+        navigate('/consumer/dasani-600ml');
+    };
+
     return (
-      <div className="bg-white px-4 py-2 rounded-lg border border-[#E5E7EB] shadow-lg">
-        <p className="text-xs text-[#6B7280] mb-1">
-          {payload[0].payload.month}
-        </p>
-        <p className="text-sm font-medium text-[#111827]">
-          {payload[0].value} kg CO₂e
-        </p>
-      </div>
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 md:p-8">
+            <div className="flex items-center space-x-3 mb-2">
+                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10m0 0h16m0 0V7m0 10l-2-2m2 2l-2 2M4 7L6 5M4 7l2 2m14-2l-2 2m2-2L18 5m-2 4h-4m4 0h-4"></path></svg>
+                <h2 className="text-xl font-semibold text-gray-800">Scan Simulator</h2>
+            </div>
+            <p className="text-sm text-gray-500 mb-4">
+                Simulate a consumer scanning a GS1 Digital Link on-pack.
+            </p>
+
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                <input
+                    type="text"
+                    placeholder="Paste or simulate a GS1 Digital Link URL..."
+                    value={scanUrl}
+                    onChange={(e) => setScanUrl(e.target.value)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition-colors text-sm"
+                />
+                <button
+                    onClick={handleSimulateScan}
+                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors flex-shrink-0"
+                >
+                    Simulate scan for Dasani 600ml
+                </button>
+            </div>
+        </div>
     );
-  }
-  return null;
-}
+};
 
-// ---------- Main page ----------
 
-export function DashboardPage() {
+// --- MAIN PAGE COMPONENT ---
+
+const DashboardPage = () => {
   return (
-    <div className="w-full bg-[#F9FAFB]">
-      {/* full-width content, same style as ProductPage */}
-      <div className="w-full px-4 py-4 sm:px-6 sm:py-6 lg:px-10 lg:py-8">
-        {/* Header */}
-        <div className="flex flex-col gap-2 mb-6 sm:mb-8">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#111827]">
-            Impact Dashboard
-          </h1>
-          <p className="text-sm sm:text-base text-[#6B7280]">
-            Real-time visibility into your product sustainability ledger and performance.
-          </p>
-        </div>
+    <div className="space-y-8">
+      
+      {/* 1. Title Section */}
+      <div>
+        <h1 className="text-3xl font-extrabold text-gray-900">Impact Dashboard</h1>
+        <p className="mt-1 text-lg text-gray-500">
+          Real-time visibility into your product sustainability ledger and performance.
+        </p>
+      </div>
 
-        {/* Summary metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <MetricCard
-            icon={<Package className="w-6 h-6 text-white" />}
-            value="128"
-            label="Total Products Tracked"
-            caption="GS1 Standards utilized"
-            iconBg="bg-[#05466C]"
-          />
-          <MetricCard
-            icon={<Gauge className="w-6 h-6 text-[#05466C]" />}
-            value="B+"
-            label="Average Impact Score"
-            caption="Target: A–"
-            iconBg="bg-[#F0B82E]"
-          />
-          <MetricCard
-            icon={<AlertTriangle className="w-6 h-6 text-white" />}
-            value="6"
-            label="High-Risk Products"
-            caption="Requires immediate review"
-            iconBg="bg-[#EB121E]"
-          />
-          <MetricCard
-            icon={<UserX className="w-6 h-6 text-[#6B7280]" />}
-            value="3"
-            label="Suppliers with Missing Data"
-            caption="Contact for certification"
-            iconBg="bg-[#E5E7EB]"
-          />
-        </div>
+      {/* 2. KPI Cards Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpis.map((kpi) => (
+          <KpiCard key={kpi.label} {...kpi} />
+        ))}
+      </div>
 
-        {/* Trend + alerts */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div className="lg:col-span-2">
-            <Card className="p-5 sm:p-6 bg-white border border-[#E5E7EB] rounded-xl hover:shadow-lg transition-shadow">
-              <div className="flex flex-col gap-4 h-full">
-                <div className="flex items-start justify-between flex-shrink-0">
-                  <div className="flex flex-col gap-1">
-                    <h2 className="text-base sm:text-lg font-medium text-[#111827]">
-                      Carbon Impact Trend
-                    </h2>
-                    <p className="text-xs sm:text-sm text-[#6B7280]">
-                      Monthly emissions across all product categories
-                    </p>
-                  </div>
-                  <BarChart3 className="w-5 h-5 text-[#05466C]/60" />
-                </div>
-
-                <div className="w-full h-56 sm:h-64 md:h-72">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                      data={carbonData}
-                      margin={{ top: 10, right: 20, left: 0, bottom: 5 }}
-                    >
-                      <defs>
-                        <linearGradient id="colorCarbon" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#05466C" stopOpacity={0.1} />
-                          <stop offset="95%" stopColor="#05466C" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="#E5E7EB"
-                        opacity={0.2}
-                        vertical={false}
-                      />
-                      <XAxis
-                        dataKey="month"
-                        stroke="#9CA3AF"
-                        tick={{ fill: '#6B7280', fontSize: 11 }}
-                        tickLine={false}
-                        axisLine={{ stroke: '#E5E7EB' }}
-                      />
-                      <YAxis
-                        domain={[10, 15]}
-                        ticks={[10, 11, 12, 13, 14, 15]}
-                        stroke="#9CA3AF"
-                        tick={{ fill: '#6B7280', fontSize: 11 }}
-                        tickLine={false}
-                        axisLine={{ stroke: '#E5E7EB' }}
-                        label={{
-                          value: 'kg CO₂e',
-                          angle: -90,
-                          position: 'insideLeft',
-                          style: { fill: '#6B7280', fontSize: 11 },
-                        }}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="carbon"
-                        stroke="#05466C"
-                        strokeWidth={2.5}
-                        fill="url(#colorCarbon)"
-                        dot={{ fill: '#05466C', strokeWidth: 2, r: 4 }}
-                        activeDot={{ r: 6, fill: '#05466C', strokeWidth: 0 }}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          <div className="lg:col-span-1">
-            <Card className="p-5 sm:p-6 bg-white border border-[#E5E7EB] rounded-xl hover:shadow-lg transition-shadow h-full">
-              <div className="flex flex-col gap-4 h-full">
-                <div className="flex flex-col gap-1 flex-shrink-0">
-                  <h2 className="text-base sm:text-lg font-medium text-[#111827]">
-                    Alerts & Hotspots
-                  </h2>
-                  <p className="text-xs sm:text-sm text-[#6B7280]">
-                    Immediate action required for high-risk items.
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-3 flex-1 overflow-y-auto min-h-[160px] max-h-72 pr-1">
-                  {mockAlerts.map((alert) => (
-                    <div
-                      key={alert.id}
-                      className="flex flex-col gap-2 p-3 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB] hover:shadow-sm transition-shadow flex-shrink-0"
-                    >
-                      <Badge className={`self-start rounded-full px-3 py-0.5 text-xs border ${alert.severityColor}`}>
-                        {alert.severity}
-                      </Badge>
-                      <p className="text-sm text-[#111827]">{alert.message}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Card>
+      {/* 3. Middle Section (Chart + Alerts) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* LEFT: Chart Placeholder (2/3 width on desktop) */}
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-lg border border-gray-100 p-6 h-96">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Carbon Impact Trend</h2>
+          
+          <div className="h-full flex items-center justify-center bg-gray-50 border border-dashed border-gray-300 rounded-lg p-10 mt-4">
+            <p className="text-gray-500 text-lg font-medium">Chart/Visualization Coming Soon</p>
           </div>
         </div>
 
-        {/* Quick stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-0">
-          <Card className="p-5 sm:p-6 bg-white border border-[#E5E7EB] rounded-xl hover:shadow-lg transition-shadow">
-            <div className="flex items-start justify-between mb-3">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#05466C]/10 flex items-center justify-center">
-                <Package className="w-5 h-5 text-[#05466C]" />
-              </div>
-              <Badge className="bg-[#05466C] text-white rounded-full px-3 py-1 text-xs">
-                FMCG
-              </Badge>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="text-xl sm:text-2xl font-medium text-[#111827]">52</div>
-              <p className="text-sm text-[#6B7280]">Food Products</p>
-              <p className="text-xs text-[#9CA3AF] mt-2">40.6% of total inventory</p>
-            </div>
-          </Card>
-
-          <Card className="p-5 sm:p-6 bg-white border border-[#E5E7EB] rounded-xl hover:shadow-lg transition-shadow">
-            <div className="flex items-start justify-between mb-3">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#F0B82E]/10 flex items-center justify-center">
-                <Package className="w-5 h-5 text-[#F0B82E]" />
-              </div>
-              <Badge className="bg-[#F0B82E] text-[#05466C] rounded-full px-3 py-1 text-xs">
-                BCRS
-              </Badge>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="text-xl sm:text-2xl font-medium text-[#111827]">48</div>
-              <p className="text-sm text-[#6B7280]">Beverage Containers</p>
-              <p className="text-xs text-[#9CA3AF] mt-2">37.5% of total inventory</p>
-            </div>
-          </Card>
-
-          <Card className="p-5 sm:p-6 bg-white border border-[#E5E7EB] rounded-xl hover:shadow-lg transition-shadow">
-            <div className="flex items-start justify-between mb-3">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#EB121E]/10 flex items-center justify-center">
-                <Package className="w-5 h-5 text-[#EB121E]" />
-              </div>
-              <Badge className="bg-[#FEE2E2] text-[#EB121E] rounded-full px-3 py-1 text-xs">
-                Beauty
-              </Badge>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="text-xl sm:text-2xl font-medium text-[#111827]">28</div>
-              <p className="text-sm text-[#6B7280]">Beauty & Cosmetics</p>
-              <p className="text-xs text-[#9CA3AF] mt-2">21.9% of total inventory</p>
-            </div>
-          </Card>
+        {/* RIGHT: Alerts & Hotspots (1/3 width on desktop) */}
+        <div className="lg:col-span-1 bg-white rounded-xl shadow-lg border border-gray-100">
+          <div className="p-6 border-b border-gray-100">
+            <h2 className="text-xl font-semibold text-red-700">Alerts & Hotspots</h2>
+            <p className="text-sm text-gray-500 mt-1">Immediate action required for high-risk items.</p>
+          </div>
+          <ul className="divide-y divide-gray-100 p-6">
+            {alerts.map((alert) => (
+              <AlertItem key={alert.id} {...alert} />
+            ))}
+          </ul>
         </div>
       </div>
+      
+      {/* New Scan Simulator Card */}
+      <ScanSimulatorCard />
+
+      {/* 4. Bottom Section: Recent Ledger Events */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-800">Recent Ledger Events</h2>
+          <p className="text-sm text-gray-500 mt-1">Immutable record of recent sustainability transactions.</p>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Timestamp
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Event
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Product
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {ledgerEvents.map((event) => (
+                <LedgerRow key={event.id} {...event} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   );
-}
+};
 
 export default DashboardPage;
