@@ -80,7 +80,8 @@ export default function ProductDetailPage() {
   if (!product) {
     return (
       <div className="w-full bg-[#F9FAFB]">
-        <div className="max-w-4xl mx-auto px-4 py-12">
+        {/* full-width error state */}
+        <div className="w-full px-4 lg:px-10 py-12">
           <h1 className="text-2xl font-semibold text-[#111827] mb-2">
             Product not found
           </h1>
@@ -98,20 +99,20 @@ export default function ProductDetailPage() {
   const isDasani = product.gtin === DASANI_GTIN;
 
   // Use REAL product data wherever possible
-  const carbonFootprint = product.carbonFootprint; // e.g. "4.1 kg CO₂e" or "8.2 kg CO₂e"
-  const circularityScore = product.circularity; // e.g. "85%"
-  const complianceStatus = product.compliance; // enum from data
-  const packagingType = product.packagingType; // e.g. "PET", "Glass"
+  const carbonFootprint = product.carbonFootprint;
+  const circularityScore = product.circularity;
+  const complianceStatus = product.compliance;
+  const packagingType = product.packagingType;
 
-  // For now, recycledContent & recoveryRate are generic/demo values
-  // You can later move these into products.ts if you have them.
+  // Demo values
   const recycledContent = isDasani ? "30%" : "—";
   const recoveryRate = isDasani ? "78%" : "—";
 
   return (
     <>
       <div className="w-full bg-[#F9FAFB]">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-8">
+        {/* full-width layout, no max-w / mx-auto */}
+        <div className="w-full px-4 lg:px-10 py-6 lg:py-8">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-[#6B7280] mb-6">
             <Link
