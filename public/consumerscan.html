@@ -786,34 +786,56 @@
         </div>
       </section>
 
-      <!-- AI insight -->
-      <section class="mb-6">
-        <div
-          class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl border border-amber-200 p-4 space-y-2"
-        >
-          <div class="flex items-start gap-2">
-            <div
-              class="w-8 h-8 rounded-lg bg-amber-400/20 flex items-center justify-center"
-            >
-              ✨
-            </div>
-            <div>
-              <p class="text-[11px] font-semibold text-amber-900">
-                AI Insight
-              </p>
-              <p class="text-xs text-amber-900">
-                Most of the environmental footprint comes from PET bottle
-                production, not the water.
+      <!-- AI Mini-Insight -->
+<section class="mb-6">
+    <div class="bg-gradient-to-br from-yellow-50 to-amber-100 border-2 border-amber-200/30 rounded-xl p-4">
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 w-10 h-10 bg-amber-200/50 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-amber-500 animate-pulse" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-12.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 7.66l-.71-.71M4.05 4.05l-.71-.71M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-xs font-bold text-amber-900 mb-1">AI Insight</p>
+          <p class="text-sm text-amber-800 leading-relaxed">
+            Most of the environmental footprint comes from PET bottle production, not the water.
+          </p>
+  
+          <!-- Expand button -->
+          <button
+            id="ai-insight-toggle"
+            class="mt-2 text-xs font-medium text-amber-600 underline hover:no-underline transition-colors flex items-center gap-1"
+          >
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            How this is calculated →
+          </button>
+  
+          <!-- Collapsible explanation panel -->
+          <div id="ai-insight-details" class="hidden mt-3 bg-white border border-amber-200 rounded-lg p-3 text-xs text-amber-900 space-y-2">
+            <p class="font-semibold">Breakdown of Impact Sources:</p>
+  
+            <ul class="space-y-1">
+              <li><strong class="text-amber-700">● 55% — PET bottle manufacturing</strong><br>Based on typical LCA values for PET resin & moulding.</li>
+              <li><strong class="text-amber-700">● 25% — Transportation & distribution</strong><br>Cross-border delivery from MY → SG adds moderate emissions.</li>
+              <li><strong class="text-amber-700">● 15% — Water purification & processing</strong><br>Energy used for filtration and mineralisation.</li>
+              <li><strong class="text-amber-700">● 5% — End-of-life assumptions</strong><br>Depending on whether bottle is recycled or landfilled.</li>
+            </ul>
+  
+            <div class="pt-1">
+              <p class="font-semibold">Data Sources:</p>
+              <p class="text-[11px] text-amber-800 leading-relaxed">
+                Category averages (beverages), GS1 Digital Link product metadata, typical PET life-cycle emission factors, and average MY → SG logistics distances.
               </p>
             </div>
           </div>
-          <button
-            class="text-[11px] text-amber-800 underline underline-offset-2"
-          >
-            How this is calculated →
-          </button>
+  
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
+  
 
       <!-- Share / compare -->
       <section class="mb-6 space-y-3">
@@ -1080,6 +1102,20 @@
       renderRegion("SG");
     })();
   </script>
+
+<script>
+    (function () {
+      const toggle = document.getElementById("ai-insight-toggle");
+      const panel = document.getElementById("ai-insight-details");
+  
+      if (!toggle || !panel) return;
+  
+      toggle.addEventListener("click", () => {
+        panel.classList.toggle("hidden");
+      });
+    })();
+  </script>
+  
   
 
   </body>
