@@ -403,62 +403,131 @@
         </div>
       </section>
 
-      <!-- Product information -->
-      <section class="mb-6">
-        <div
-          class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-3"
+     <!-- Product Information (collapsible) -->
+<section class="mb-6">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+      <!-- Header button -->
+      <button
+        id="product-info-toggle"
+        type="button"
+        class="w-full px-4 py-3 sm:py-4 flex items-center justify-between gap-2 hover:bg-slate-50 transition-colors"
+        aria-expanded="false"
+        aria-controls="product-info-content"
+      >
+        <span class="text-sm font-semibold text-slate-900">
+          Product Information
+        </span>
+        <svg
+          id="product-info-chevron"
+          class="w-4 h-4 text-slate-500 transition-transform duration-200"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
         >
-          <div class="flex items-center justify-between">
-            <h2 class="text-sm font-semibold text-slate-900">
-              Product Information
-            </h2>
-          </div>
-          <dl class="space-y-2 text-xs sm:text-sm">
-            <div>
-              <dt class="font-medium text-slate-500">Product Type</dt>
-              <dd class="text-slate-900">Purified Drinking Water</dd>
-            </div>
-            <div>
-              <dt class="font-medium text-slate-500">Ingredients</dt>
-              <dd class="text-slate-900">
-                Water, mineral salts added for taste
-              </dd>
-            </div>
-            <div>
-              <dt class="font-medium text-slate-500">Net Volume</dt>
-              <dd class="text-slate-900">600ml</dd>
-            </div>
-            <div>
-              <dt class="font-medium text-slate-500">Manufacturer</dt>
-              <dd class="text-slate-900">Coca-Cola Bottlers Malaysia</dd>
-            </div>
-            <div>
-              <dt class="font-medium text-slate-500">Batch/Lot</dt>
-              <dd class="text-slate-900 font-mono">LOT 21H23</dd>
-            </div>
-            <div>
-              <dt class="font-medium text-slate-500">Best Before</dt>
-              <dd class="text-slate-900">14 AUG 2026</dd>
-            </div>
-            <div>
-              <dt class="font-medium text-slate-500">Contact</dt>
-              <dd>
-                <a
-                  href="https://www.dasani.com"
-                  class="text-sky-600 hover:underline"
-                  >www.dasani.com</a
-                >
-                <p class="text-xs text-slate-500">
-                  Consumer hotline available
-                </p>
-              </dd>
-            </div>
-          </dl>
-          <div
-            class="mt-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-[11px] text-amber-900 flex gap-2"
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+  
+      <!-- Collapsible content -->
+      <div
+        id="product-info-content"
+        class="px-4 pb-4 pt-0 border-t border-slate-100 space-y-3 text-xs sm:text-sm hidden"
+      >
+        <div>
+          <p class="font-medium text-slate-500 mb-0.5">Product Type</p>
+          <p class="text-slate-900">Purified Drinking Water</p>
+        </div>
+  
+        <div>
+          <p class="font-medium text-slate-500 mb-0.5">Ingredients</p>
+          <p class="text-slate-900">
+            Water, mineral salts added for taste
+          </p>
+        </div>
+  
+        <div>
+          <p class="font-medium text-slate-500 mb-0.5">Net Volume</p>
+          <p class="text-slate-900">600ml</p>
+        </div>
+  
+        <div>
+          <p class="font-medium text-slate-500 mb-0.5">Manufacturer</p>
+          <p class="text-slate-900">Coca-Cola Bottlers Malaysia</p>
+        </div>
+  
+        <div>
+          <p class="font-medium text-slate-500 mb-0.5">Batch/Lot</p>
+          <p class="text-slate-900 font-mono">LOT 21H23</p>
+        </div>
+  
+        <div>
+          <p class="font-medium text-slate-500 mb-0.5">Best Before</p>
+          <p class="text-slate-900">14 AUG 2026</p>
+        </div>
+  
+        <div>
+          <p class="font-medium text-slate-500 mb-0.5">Contact</p>
+          <a
+            href="https://www.dasani.com"
+            class="text-sky-600 hover:underline"
+          >
+            www.dasani.com
+          </a>
+          <p class="text-[11px] text-slate-500 mt-0.5">
+            Consumer hotline available
+          </p>
+        </div>
+  
+        <div
+          class="mt-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-[11px] text-amber-900 flex gap-2"
+        >
+          <svg
+            class="w-4 h-4 flex-shrink-0 mt-[2px]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M13 16h-1v-4h-1m1-4h.01M12 3a9 9 0 11-9 9 9 9 0 019-9z"
+            />
+          </svg>
+          <p>
+            Always refer to on-pack label for official information.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+    <!-- Country-Specific Recycling (BCRS-Ready) -->
+<section class="mb-6">
+    <div
+      class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl border border-emerald-200 p-4 space-y-4"
+    >
+      <!-- Title + detected region -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h2
+            id="recycle-title"
+            class="text-sm font-semibold text-emerald-900"
+          >
+            How to Recycle in Singapore
+          </h2>
+          <p
+            class="text-xs text-emerald-700 flex items-center gap-1 mt-1"
+            id="recycle-subtitle"
           >
             <svg
-              class="w-4 h-4 flex-shrink-0 mt-[2px]"
+              class="w-3.5 h-3.5"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
@@ -467,106 +536,112 @@
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M12 3a9 9 0 11-9 9 9 9 0 019-9z"
+                d="M17.657 16.657L13.414 12.414 9.172 16.657m4.242-4.243L6.343 5.343m0 0h5.657M6.343 5.343v5.657"
               />
             </svg>
-            <p>
-              Always refer to on-pack label for official information.
-            </p>
-          </div>
+            Auto-detected:
+            <span class="font-semibold" id="recycle-region-label">
+              SG (Singapore)
+            </span>
+          </p>
         </div>
-      </section>
-
-      <!-- Recycling in SG -->
-      <section class="mb-6">
-        <div
-          class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl border border-emerald-200 p-4 space-y-3"
-        >
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-sm font-semibold text-emerald-900">
-                How to Recycle in Singapore
-              </h2>
-              <p class="text-xs text-emerald-700 flex items-center gap-1 mt-1">
-                <svg
-                  class="w-3.5 h-3.5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17.657 16.657L13.414 12.414 9.172 16.657m4.242-4.243L6.343 5.343m0 0h5.657M6.343 5.343v5.657"
-                  />
-                </svg>
-                Auto-detected: <span class="font-semibold">SG (Singapore)</span>
-              </p>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-xl p-4 space-y-2">
-            <div class="flex items-center gap-2 mb-2">
-              <svg
-                class="w-4 h-4 text-emerald-600"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4.5 9.75L9 4.5m6 0l4.5 5.25M6 9h12v11H6z"
-                />
-              </svg>
-              <p class="text-xs font-semibold text-emerald-800">
-                Simple steps
-              </p>
-            </div>
-            <ol class="space-y-1.5 text-xs text-slate-700">
-              <li>1. Rinse bottle lightly</li>
-              <li>2. Remove cap (recycle together)</li>
-              <li>3. Leave label on (machine sorted)</li>
-              <li>
-                4. Dispose at
-                <span class="font-semibold">Blue Bin</span> or
-                <span class="font-semibold">BCRS Return Point</span>
-              </li>
-            </ol>
-          </div>
-
-          <div class="flex gap-1 flex-wrap text-[11px]">
-            <span
-              class="px-3 py-1 rounded-lg bg-emerald-500 text-white font-medium"
-              >SG</span
-            >
-            <span
-              class="px-3 py-1 rounded-lg bg-white text-emerald-700 border border-emerald-200"
-              >MY</span
-            >
-            <span
-              class="px-3 py-1 rounded-lg bg-white text-emerald-700 border border-emerald-200"
-              >TH</span
-            >
-            <span
-              class="px-3 py-1 rounded-lg bg-white text-emerald-700 border border-emerald-200"
-              >EU</span
-            >
-            <span
-              class="px-3 py-1 rounded-lg bg-white text-emerald-700 border border-emerald-200"
-              >US</span
-            >
-          </div>
-
-          <button
-            class="w-full mt-1 text-xs font-medium text-emerald-800 border border-emerald-300 bg-white rounded-lg py-2 hover:bg-emerald-50"
+      </div>
+  
+      <!-- Steps card -->
+      <div
+        class="bg-white rounded-xl p-4 space-y-3"
+      >
+        <div class="flex items-center gap-2 mb-2">
+          <svg
+            class="w-5 h-5 text-emerald-600"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
           >
-            Learn more about recycling this item →
-          </button>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4.5 9.75L9 4.5m6 0l4.5 5.25M6 9h12v11H6z"
+            />
+          </svg>
+          <h3
+            class="text-sm font-semibold text-emerald-900"
+            id="recycle-steps-title"
+          >
+            Simple steps
+          </h3>
         </div>
-      </section>
+  
+        <!-- Dynamic steps -->
+        <ol
+          id="recycle-steps"
+          class="space-y-1.5 text-xs text-slate-700"
+        >
+          <!-- JS will inject <li> items here -->
+        </ol>
+  
+        <!-- Dynamic note -->
+        <p
+          id="recycle-note"
+          class="text-[11px] text-slate-500 pt-1"
+        >
+          Always check local recycling labels and follow on-pack instructions.
+        </p>
+      </div>
+  
+      <!-- Region selector chips -->
+      <div class="flex gap-1 flex-wrap text-[11px]">
+        <button
+          type="button"
+          class="px-3 py-1 rounded-lg font-medium"
+          data-region="SG"
+          id="chip-SG"
+        >
+          SG
+        </button>
+        <button
+          type="button"
+          class="px-3 py-1 rounded-lg font-medium"
+          data-region="MY"
+          id="chip-MY"
+        >
+          MY
+        </button>
+        <button
+          type="button"
+          class="px-3 py-1 rounded-lg font-medium"
+          data-region="TH"
+          id="chip-TH"
+        >
+          TH
+        </button>
+        <button
+          type="button"
+          class="px-3 py-1 rounded-lg font-medium"
+          data-region="EU"
+          id="chip-EU"
+        >
+          EU
+        </button>
+        <button
+          type="button"
+          class="px-3 py-1 rounded-lg font-medium"
+          data-region="US"
+          id="chip-US"
+        >
+          US
+        </button>
+      </div>
+  
+      <button
+        class="w-full mt-1 text-xs font-medium text-emerald-800 border border-emerald-300 bg-white rounded-lg py-2 hover:bg-emerald-50"
+      >
+        Learn more about recycling this item →
+      </button>
+    </div>
+  </section>
+  
 
       <!-- Material journey -->
       <section class="mb-6">
@@ -851,5 +926,161 @@
       
       
     </main>
+
+    <script>
+        (function () {
+          const toggle = document.getElementById("product-info-toggle");
+          const content = document.getElementById("product-info-content");
+          const chevron = document.getElementById("product-info-chevron");
+      
+          if (!toggle || !content || !chevron) return;
+      
+          toggle.addEventListener("click", () => {
+            const isHidden = content.classList.contains("hidden");
+      
+            if (isHidden) {
+              content.classList.remove("hidden");
+              toggle.setAttribute("aria-expanded", "true");
+              chevron.classList.add("rotate-180");
+            } else {
+              content.classList.add("hidden");
+              toggle.setAttribute("aria-expanded", "false");
+              chevron.classList.remove("rotate-180");
+            }
+          });
+        })();
+      </script>
+
+<script>
+    (function () {
+      const regionsConfig = {
+        SG: {
+          title: "How to Recycle in Singapore",
+          label: "SG (Singapore)",
+          stepsTitle: "Simple steps",
+          steps: [
+            "Rinse bottle lightly to remove drink residue.",
+            "Remove cap; you can recycle the cap together with the bottle.",
+            "Leave the label on – sorting facilities can handle it.",
+            "Place in the Blue Recycling Bin or at a BCRS return point (for eligible containers)."
+          ],
+          note:
+            "Follow NEA guidance: only clean, empty plastic bottles should go into the blue bin or BCRS return points."
+        },
+        MY: {
+          title: "How to Recycle in Malaysia",
+          label: "MY (Malaysia)",
+          stepsTitle: "Simple steps",
+          steps: [
+            "Rinse the bottle to remove any remaining drink.",
+            "Remove cap and recycle it together or separately if your local scheme requires.",
+            "Check for the PET (1) symbol to confirm it’s accepted.",
+            "Place the bottle in designated plastic recycling bins or community collection points."
+          ],
+          note:
+            "Recycling schemes can differ by municipality – follow local council instructions on plastics and caps."
+        },
+        TH: {
+          title: "How to Recycle in Thailand",
+          label: "TH (Thailand)",
+          stepsTitle: "Simple steps",
+          steps: [
+            "Rinse the bottle so it’s clean and dry.",
+            "Remove the cap; keep it for plastic collection or recycle together if accepted.",
+            "Flatten the bottle gently to save space.",
+            "Send to plastic collection points, buy-back centers, or clearly marked recycling bins."
+          ],
+          note:
+            "Many communities and buy-back centers accept PET bottles; check local programs for cap and label rules."
+        },
+        EU: {
+          title: "How to Recycle in the EU",
+          label: "EU (Europe)",
+          stepsTitle: "Simple steps",
+          steps: [
+            "Empty and lightly rinse the bottle.",
+            "In many EU countries, caps are designed to stay attached – if attached, recycle with cap on.",
+            "Look for the PET (1) symbol and local recycling instructions.",
+            "Place the bottle in the plastic/packaging recycling bin or use deposit-return machines where available."
+          ],
+          note:
+            "Rules vary by country (e.g. deposit return in parts of the EU); always follow local bin colours and on-pack symbols."
+        },
+        US: {
+          title: "How to Recycle in the US",
+          label: "US (USA)",
+          stepsTitle: "Simple steps",
+          steps: [
+            "Empty the bottle; a quick rinse helps prevent contamination.",
+            "Most programs now accept bottles with caps on – if in doubt, check your city’s guidance.",
+            "Do not bag recyclables unless your hauler explicitly allows it.",
+            "Place the bottle in your curbside recycling cart or drop-off recycling center."
+          ],
+          note:
+            "Recycling rules are set by local municipalities; check your city or county website for the most accurate guidance."
+        }
+      };
+  
+      const titleEl = document.getElementById("recycle-title");
+      const subtitleEl = document.getElementById("recycle-subtitle");
+      const regionLabelEl = document.getElementById("recycle-region-label");
+      const stepsTitleEl = document.getElementById("recycle-steps-title");
+      const stepsListEl = document.getElementById("recycle-steps");
+      const noteEl = document.getElementById("recycle-note");
+  
+      const chips = {
+        SG: document.getElementById("chip-SG"),
+        MY: document.getElementById("chip-MY"),
+        TH: document.getElementById("chip-TH"),
+        EU: document.getElementById("chip-EU"),
+        US: document.getElementById("chip-US")
+      };
+  
+      function setActiveChip(code) {
+        Object.entries(chips).forEach(([key, el]) => {
+          if (!el) return;
+          if (key === code) {
+            el.className =
+              "px-3 py-1.5 rounded-lg text-xs font-medium bg-[#10B981] text-white shadow-md";
+          } else {
+            el.className =
+              "px-3 py-1.5 rounded-lg text-xs font-medium bg-white text-[#047857] border border-[#10B981]/30 hover:bg-[#F0FDF4]";
+          }
+        });
+      }
+  
+      function renderRegion(code) {
+        const cfg = regionsConfig[code];
+        if (!cfg) return;
+  
+        if (titleEl) titleEl.textContent = cfg.title;
+        if (regionLabelEl) regionLabelEl.textContent = cfg.label;
+        if (stepsTitleEl) stepsTitleEl.textContent = cfg.stepsTitle;
+        if (noteEl) noteEl.textContent = cfg.note;
+  
+        if (stepsListEl) {
+          stepsListEl.innerHTML = "";
+          cfg.steps.forEach((step, idx) => {
+            const li = document.createElement("li");
+            li.textContent = `${idx + 1}. ${step}`;
+            stepsListEl.appendChild(li);
+          });
+        }
+  
+        setActiveChip(code);
+      }
+  
+      // Attach click handlers
+      Object.entries(chips).forEach(([code, el]) => {
+        if (!el) return;
+        el.addEventListener("click", () => renderRegion(code));
+      });
+  
+      // Initial render: Singapore (SG)
+      renderRegion("SG");
+    })();
+  </script>
+  
+
   </body>
 </html>
