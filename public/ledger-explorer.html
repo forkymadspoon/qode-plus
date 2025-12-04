@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GS1 + Ledger Architecture Explorer • Qode+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+            sans-serif;
+        }
+      
+        /* Base chip */
+        .layer-chip-base {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 9999px;
+          border: 1px solid rgb(51, 65, 85); /* slate-700 */
+          background-color: rgba(15, 23, 42, 0.9); /* dark navy */
+          color: rgb(229, 231, 235); /* slate-200 */
+          font-size: 11px;
+          padding: 0.25rem 0.75rem;
+          transition: background-color 120ms ease, color 120ms ease,
+            border-color 120ms ease;
+          cursor: pointer;
+          white-space: nowrap;
+        }
+      
+        /* Hover (non-active only) */
+        .layer-chip-base:hover:not(.layer-chip-active) {
+          background-color: rgb(30, 58, 138); /* indigo-800 */
+          border-color: rgb(129, 140, 248); /* indigo-300 */
+          color: white;
+        }
+      
+        /* Active chip (NO GREY!) */
+        .layer-chip-active {
+          background-color: rgba(15, 23, 42, 1); /* same dark navy */
+          border-color: rgb(180, 198, 255); /* subtle brighter border */
+          color: white;
+        }
+      </style>
+      
+      
+  </head>
+  <body class="bg-slate-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 shadow-sm">
+      <div class="max-w-[600px] mx-auto px-4 sm:px-5 py-4">
+        <!-- Top row -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+          <!-- Logo + title -->
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <p
+                class="font-bold text-[22px] sm:text-[24px] leading-none"
+                style="font-family: 'Familjen Grotesk', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;"
+              >
+                <span class="text-[#efbc02]">Q</span
+                ><span class="text-[#01416c]">ode</span
+                ><span class="text-[#e92e16]">+</span>
+              </p>
+            </div>
+            <p class="text-xs uppercase tracking-[0.18em] text-slate-400">
+              Impact Ledger · Architecture Explorer
+            </p>
+          </div>
+
+          <!-- Tag -->
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-100 hover:bg-sky-100 hover:border-sky-200 transition-colors"
+          >
+            <span
+              class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-sky-600 text-white text-[11px] font-semibold"
+              >GS1</span
+            >
+            <span class="text-[11px] font-medium text-sky-900">
+              Technical Transparency View
+            </span>
+          </div>
+        </div>
+
+        <!-- Subtitle -->
+        <p class="text-[13px] leading-relaxed text-slate-600">
+          Explore how GS1 identifiers, supply chain events, and the ledger work
+          together to power the Impact Ledger and consumer trust screens.
+        </p>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="max-w-[600px] mx-auto px-4 sm:px-5 py-5 space-y-4">
+      <!-- Context card -->
+      <section
+        class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <div class="space-y-1">
+            <p class="text-xs font-semibold text-slate-500 uppercase">
+              Current view
+            </p>
+            <h1 class="text-base font-semibold text-slate-900">
+              Dasani Drinking Water · 600ml
+            </h1>
+            <p class="text-xs text-slate-600">
+              GTIN: <span class="font-mono">00049000082055</span> &nbsp;·&nbsp;
+              Batch: <span class="font-mono">LOT 21H23</span>
+            </p>
+          </div>
+          <div
+            class="flex flex-col items-end gap-1 text-right text-[11px] text-slate-500"
+          >
+            <span class="inline-flex items-center gap-1">
+              <span
+                class="w-2 h-2 rounded-full bg-emerald-500 inline-block"
+              ></span>
+              Ledger synced
+            </span>
+            <span>Last write: 2h ago (UTC+8)</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 text-[11px]">
+          <span
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100 hover:bg-emerald-100 hover:border-emerald-200 transition-colors"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Verifiable product record
+          </span>
+          <span
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-sky-50 text-sky-800 border border-sky-100 hover:bg-sky-100 hover:border-sky-200 transition-colors"
+          >
+            Identifier → Ledger → Consumer path
+          </span>
+        </div>
+      </section>
+
+      <!-- Layers intro -->
+      <section class="bg-slate-900 text-slate-50 rounded-2xl p-4 space-y-3">
+        <div class="flex items-start gap-3">
+          <div
+            class="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center"
+          >
+            <span class="text-[18px] font-semibold">Λ</span>
+          </div>
+        </div>
+        <div class="space-y-1">
+          <h2 class="text-sm font-semibold">
+            From identifiers to shopper trust
+          </h2>
+          <p class="text-[12px] text-slate-300 leading-relaxed">
+            This explorer breaks your Impact Ledger into 5 layers – from GS1
+            identifiers and supply chain data, all the way to AI insights and
+            the consumer scan page.
+          </p>
+        </div>
+
+        <!-- Clickable chips -->
+        <div class="flex flex-wrap gap-1.5 text-[11px]">
+          <button
+            type="button"
+            class="layer-chip layer-chip-base"
+            data-scroll="section-A"
+          >
+            A. Identifier
+          </button>
+          <button
+            type="button"
+            class="layer-chip layer-chip-base"
+            data-scroll="section-B"
+          >
+            B. Data
+          </button>
+          <button
+            type="button"
+            class="layer-chip layer-chip-base"
+            data-scroll="section-C"
+          >
+            C. Ledger
+          </button>
+          <button
+            type="button"
+            class="layer-chip layer-chip-base"
+            data-scroll="section-D"
+          >
+            D. Intelligence
+          </button>
+          <button
+            type="button"
+            class="layer-chip layer-chip-base"
+            data-scroll="section-E"
+          >
+            E. Consumer
+          </button>
+        </div>
+      </section>
+
+      <!-- Layer cards (always open) -->
+      <section class="space-y-3">
+        <!-- Layer A -->
+        <div
+          id="section-A"
+          class="layer-section bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden 
+                 transition-all duration-300 opacity-0 translate-y-2
+                 hover:shadow-md hover:border-slate-300 hover:-translate-y-[2px]"
+        >
+          <div class="flex items-center gap-3 px-4 pt-3 pb-1">
+            <div
+              class="w-8 h-8 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center"
+            >
+              <span class="text-xs font-bold text-sky-700">A</span>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">
+                Identifier Layer
+              </p>
+              <p class="text-[11px] text-slate-500">
+                GTIN, GLN, SSCC, GS1 Digital Link
+              </p>
+            </div>
+          </div>
+          <div class="px-4 pb-4 pt-1 space-y-2 text-[12px] text-slate-700">
+            <p class="text-[11px] text-slate-500 mb-1">
+              All technical trust starts with globally unique GS1 identifiers.
+            </p>
+            <div class="flex flex-wrap gap-1.5 mb-2">
+              <span
+                class="px-2 py-1 rounded-full bg-slate-100 text-[11px] font-mono text-slate-800 hover:bg-slate-200 transition-colors"
+                >GTIN · 00049000082055</span
+              >
+              <span
+                class="px-2 py-1 rounded-full bg-slate-100 text-[11px] font-mono text-slate-800 hover:bg-slate-200 transition-colors"
+                >Batch · LOT 21H23</span
+              >
+              <span
+                class="px-2 py-1 rounded-full bg-slate-100 text-[11px] text-slate-800 hover:bg-slate-200 transition-colors"
+                >Digital Link URI · /01/00049000082055/10/LOT21H23</span
+              >
+            </div>
+            <ul class="list-disc list-inside space-y-1">
+              <li>
+                <span class="font-semibold">List of GS1 identifiers:</span>
+                GTIN for the consumer unit, optional GLN for bottling facility,
+                SSCC for pallets, and batch/lot.
+              </li>
+              <li>
+                <span class="font-semibold">Clickable identifier tags:</span>
+                each tag resolves to metadata (e.g. brand, net content,
+                regulated attributes).
+              </li>
+              <li>
+                <span class="font-semibold">GS1 Digital Link mapping:</span>
+                short URL → full GS1 Digital Link URI for scanners and apps.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Layer B -->
+        <div
+          id="section-B"
+          class="layer-section bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden 
+                 transition-all duration-300 opacity-0 translate-y-2
+                 hover:shadow-md hover:border-slate-300 hover:-translate-y-[2px]"
+        >
+          <div class="flex items-center gap-3 px-4 pt-3 pb-1">
+            <div
+              class="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center"
+            >
+              <span class="text-xs font-bold text-emerald-700">B</span>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">
+                Data Layer
+              </p>
+              <p class="text-[11px] text-slate-500">
+                EPCIS, certifications, CO₂ checkpoints, packaging data
+              </p>
+            </div>
+          </div>
+          <div class="px-4 pb-4 pt-1 space-y-2 text-[12px] text-slate-700">
+            <p class="text-[11px] text-slate-500 mb-1">
+              Supply chain and sustainability data anchored to each identifier.
+            </p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>
+                <span class="font-semibold">EPCIS events:</span> commissioning,
+                shipping, receiving and aggregation events for each batch.
+              </li>
+              <li>
+                <span class="font-semibold">Certification documents:</span>
+                facility food safety certificates, water quality reports,
+                packaging compliance PDFs.
+              </li>
+              <li>
+                <span class="font-semibold">CO₂ checkpoint entries:</span>
+                per-stage emission estimates (bottle production, transport, line
+                efficiency).
+              </li>
+              <li>
+                <span class="font-semibold">Packaging material profiles:</span>
+                PET type, recycled content %, cap and label materials, and
+                recyclability flags per market.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Layer C -->
+        <div
+          id="section-C"
+          class="layer-section bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden 
+                 transition-all duration-300 opacity-0 translate-y-2
+                 hover:shadow-md hover:border-slate-300 hover:-translate-y-[2px]"
+        >
+          <div class="flex items-center gap-3 px-4 pt-3 pb-1">
+            <div
+              class="w-8 h-8 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center"
+            >
+              <span class="text-xs font-bold text-amber-700">C</span>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">
+                Ledger Layer
+              </p>
+              <p class="text-[11px] text-slate-500">
+                Immutable log, hash verification, smart rules
+              </p>
+            </div>
+          </div>
+          <div class="px-4 pb-4 pt-1 space-y-2 text-[12px] text-slate-700">
+            <p class="text-[11px] text-slate-500 mb-1">
+              This is the backbone that guarantees integrity for auditors and
+              ESG teams.
+            </p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>
+                <span class="font-semibold">Immutable audit log viewer:</span>
+                chronological record of every write linked to a GTIN/batch.
+              </li>
+              <li>
+                <span class="font-semibold">Hash verification:</span> each
+                payload (e.g. CO₂ update, new certificate) is hashed; hashes are
+                stored for tamper detection.
+              </li>
+              <li>
+                <span class="font-semibold">Smart rules triggering:</span>
+                thresholds (e.g. emission increase, missing declaration) trigger
+                alerts on the dashboard.
+              </li>
+              <li>
+                <span class="font-semibold">Version history:</span>
+                side-by-side comparison of previous vs current product or impact
+                profiles.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Layer D -->
+        <div
+          id="section-D"
+          class="layer-section bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden 
+                 transition-all duration-300 opacity-0 translate-y-2
+                 hover:shadow-md hover:border-slate-300 hover:-translate-y-[2px]"
+        >
+          <div class="flex items-center gap-3 px-4 pt-3 pb-1">
+            <div
+              class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center"
+            >
+              <span class="text-xs font-bold text-indigo-700">D</span>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">
+                Intelligence Layer
+              </p>
+              <p class="text-[11px] text-slate-500">
+                AI insights, risk predictions, optimisation
+              </p>
+            </div>
+          </div>
+          <div class="px-4 pb-4 pt-1 space-y-2 text-[12px] text-slate-700">
+            <p class="text-[11px] text-slate-500 mb-1">
+              This is where the ledger becomes useful, not just compliant.
+            </p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>
+                <span class="font-semibold">AI insights:</span> summaries like
+                “30% lower carbon than category average” shown on the product
+                and consumer scan views.
+              </li>
+              <li>
+                <span class="font-semibold">Risk predictions:</span> early
+                warning for supplier issues, missing declarations, or abnormal
+                emission spikes.
+              </li>
+              <li>
+                <span class="font-semibold">Optimisation recommendations:</span>
+                suggestions on packaging, transport routing, or sourcing that
+                could improve the impact score.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Layer E -->
+        <div
+          id="section-E"
+          class="layer-section bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden 
+                 transition-all duration-300 opacity-0 translate-y-2
+                 hover:shadow-md hover:border-slate-300 hover:-translate-y-[2px]"
+        >
+          <div class="flex items-center gap-3 px-4 pt-3 pb-1">
+            <div
+              class="w-8 h-8 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center"
+            >
+              <span class="text-xs font-bold text-rose-700">E</span>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">
+                Consumer Layer
+              </p>
+              <p class="text-[11px] text-slate-500">
+                Shopper view, retailer view, trust badges
+              </p>
+            </div>
+          </div>
+          <div class="px-4 pb-4 pt-1 space-y-2 text-[12px] text-slate-700">
+            <p class="text-[11px] text-slate-500 mb-1">
+              The visible tip of the iceberg – powered by everything above.
+            </p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>
+                <span class="font-semibold">What the shopper sees:</span>
+                your Consumer Scan page (impact score, recycling, AI insight),
+                driven by GS1 identifiers and verified data.
+              </li>
+              <li>
+                <span class="font-semibold">What the retailer produces:</span>
+                compliance views, ESG exports, and internal dashboards built on
+                the same ledger.
+              </li>
+              <li>
+                <span class="font-semibold">Trust badges generated:</span>
+                “GS1 Verified Product”, “Trusted &amp; Genuine”, and
+                market-specific trust marks derived from the underlying data.
+              </li>
+            </ul>
+            <p class="text-[11px] text-emerald-700 mt-1">
+              This section proves credibility, especially for auditors and ESG
+              officers evaluating how your claims are generated.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-4">
+      <div class="max-w-[600px] mx-auto px-4 sm:px-5 pb-10 pt-4">
+        <div class="text-center py-5 border-t border-slate-200 space-y-3">
+          <div>
+            <p class="text-xs text-slate-400 mb-2">Powered by</p>
+            <div class="flex items-center justify-center gap-2 mb-1">
+              <p
+                class="font-bold leading-[normal] text-[22px]"
+                style="font-family: 'Familjen Grotesk', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;"
+              >
+                <span class="text-[#efbc02]">Q</span
+                ><span class="text-[#01416c]">ode</span
+                ><span class="text-[#e92e16]">+</span>
+              </p>
+            </div>
+            <p class="text-xs text-slate-400">
+              GS1 Digital Link · Impact Ledger
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      (function () {
+        const chips = document.querySelectorAll(".layer-chip");
+
+        function setActiveChipBySection(sectionId) {
+  chips.forEach((chip) => {
+    const targetId = chip.getAttribute("data-scroll");
+    if (!targetId) return;
+
+    if (targetId === sectionId) {
+      chip.classList.add("layer-chip-active");
+    } else {
+      chip.classList.remove("layer-chip-active");
+    }
+  });
+}
+
+
+        // Click behaviour: scroll + single active state
+        chips.forEach((chip) => {
+          const sectionId = chip.getAttribute("data-scroll");
+          if (!sectionId) return;
+
+          chip.addEventListener("click", () => {
+            const el = document.getElementById(sectionId);
+            if (!el) return;
+
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            setActiveChipBySection(sectionId);
+          });
+        });
+
+        // Scrollspy + fade-in on first view
+        const sections = document.querySelectorAll(".layer-section");
+        const seenSections = new Set();
+
+        if ("IntersectionObserver" in window) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                const id = entry.target.id;
+                if (!id) return;
+
+                if (entry.isIntersecting && !seenSections.has(id)) {
+                  seenSections.add(id);
+                  entry.target.classList.remove("opacity-0", "translate-y-2");
+                  entry.target.classList.add("opacity-100", "translate-y-0");
+                }
+
+                if (entry.isIntersecting) {
+                  setActiveChipBySection(id);
+                }
+              });
+            },
+            { root: null, threshold: 0.35 }
+          );
+
+          sections.forEach((section) => observer.observe(section));
+        } else {
+          sections.forEach((section) => {
+            section.classList.remove("opacity-0", "translate-y-2");
+            section.classList.add("opacity-100", "translate-y-0");
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
